@@ -108,7 +108,7 @@ body {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px;
+        padding: 10px 30px;
         height: 50px;
         font-size: 48px;
         border: 1px #888 solid;
