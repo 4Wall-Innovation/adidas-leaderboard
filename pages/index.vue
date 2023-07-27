@@ -2,7 +2,7 @@
   <div
     class="display"
     :style="`width:${displayRes.w}px;height:${displayRes.h}px;`"
-    @click="changeState()"
+    @click="run()"
   >
     <div class="buttons">
       <button @click="getData">Get Data</button>
@@ -40,16 +40,24 @@ export default {
       adData: {},
       state: "",
       auto: true,
+      leaderboardSeconds: 10,
+      adSeconds: 10,
+      timeout: null,
     };
   },
   mounted() {
-    if (this.auto) {
-      setInterval(() => {
-        this.changeState();
-      }, 10 * 1000);
-    }
+    this.run();
   },
   methods: {
+    async run() {
+      clearTimeout(this.timeout);
+      await this.changeState();
+      if (this.auto) {
+        this.timeout = setTimeout(() => {
+          this.run(true);
+        }, (this.state == "leaderboard" ? this.leaderboardSeconds : this.adSeconds) * 1000);
+      }
+    },
     async getData() {
       try {
         let { data } = await this.$axios.get("/api/data");
@@ -63,7 +71,6 @@ export default {
       try {
         let { data } = await this.$axios.get("/api/ad");
         if (!data) throw "No data";
-        console.log(data);
         this.adData = data;
       } catch (error) {
         console.error(error);
