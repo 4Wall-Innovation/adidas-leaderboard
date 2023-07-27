@@ -16,11 +16,15 @@
           v-for="(entry, index) in entries"
           :key="index"
           class="entry"
-          :style="`transition: all 0.6s ${1 + index * 0.2}s ease;`"
+          :style="`transition-delay: ${
+            state == 'leaderboard' ? 1 + index * 0.2 : index * 0.06
+          }s;`"
         >
           <span class="position">{{ index + 1 }}.</span>
           <span class="name">{{ entry.name }} {{ entry.surname }}</span>
-          <span class="score">{{ entry.Score }}</span>
+          <div class="score">
+            <AnimatedInteger :number="entry.Score" />
+          </div>
         </div>
       </div>
       <img src="~/assets/images/adidas-logo.png" alt="" class="logo" />
@@ -62,10 +66,12 @@ export default {
       try {
         let { data } = await this.$axios.get("/api/data");
         this.entries = data;
-        this.state = "leaderboard";
       } catch (error) {
         console.error(error);
       }
+    },
+    clearLeaderboard() {
+      this.entries = [];
     },
     async getAd() {
       try {
@@ -81,13 +87,15 @@ export default {
         if (this.state == "leaderboard") state = "ads";
         else state = "leaderboard";
       }
-
       if (state == "leaderboard") {
         await this.getData();
+        await new Promise((r) => setTimeout(r, 250));
         this.state = "leaderboard";
       } else if (state == "ads") {
         await this.getAd();
         this.state = "ads";
+        await new Promise((r) => setTimeout(r, 1000));
+        this.clearLeaderboard();
       }
     },
   },
@@ -128,7 +136,8 @@ body {
     flex-direction: column;
     align-items: center;
     opacity: 0;
-    transition: all 1s ease;
+    transition: all 0.6s 0.2s ease;
+    z-index: 1;
 
     background: rgb(0, 71, 135);
     background: radial-gradient(
@@ -138,9 +147,15 @@ body {
     );
     color: #fff;
     &.show {
+      transition: all 1s 0s ease;
       opacity: 1;
       .entries .entry {
+        transition: all 0.6s ease;
         transform: translateX(0px);
+        opacity: 1;
+      }
+      .logo {
+        transition: 1s 2.5s all ease;
         opacity: 1;
       }
     }
@@ -170,8 +185,9 @@ body {
           width: 200px;
         }
         .score {
+          display: flex;
+          justify-content: flex-end;
           width: 200px;
-          text-align: right;
         }
       }
     }
@@ -181,6 +197,8 @@ body {
       right: 20px;
       width: 86px;
       filter: invert(1);
+      transition: 1s 0s all ease;
+      opacity: 0;
     }
   }
   .ads {
