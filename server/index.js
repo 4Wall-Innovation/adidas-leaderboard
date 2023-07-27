@@ -48,6 +48,9 @@ app.get("/data", async (req, res) => {
     let jsonObj = parser.parse(data);
     if (!jsonObj) throw "No JSON Object";
     let entries = jsonObj.xml.entry;
+    entries.sort((a, b) => {
+      return b.Score - a.Score;
+    });
     return res.send(entries);
   } catch (error) {
     return res.status(500).send(error.message);
