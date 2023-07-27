@@ -2,6 +2,7 @@
   <div
     class="display"
     :style="`width:${displayRes.w}px;height:${displayRes.h}px;`"
+    @click="changeState()"
   >
     <div class="buttons">
       <button @click="getData">Get Data</button>
@@ -15,29 +16,72 @@
           v-for="(entry, index) in entries"
           :key="index"
           class="entry"
-          :style="`transition: all 0.6s ${index * 0.2}s ease;`"
+          :style="`transition: all 0.6s ${1 + index * 0.2}s ease;`"
         >
+          <span class="position">{{ index + 1 }}.</span>
           <span class="name">{{ entry.name }} {{ entry.surname }}</span>
           <span class="score">{{ entry.Score }}</span>
         </div>
       </div>
       <img src="~/assets/images/adidas-logo.png" alt="" class="logo" />
     </div>
-    <div class="ads"></div>
+    <div class="ads" :class="{ show: state == 'ads' }">
+      <MediaViewer :file="adData" />
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   data() {
-    return { displayRes: { w: 900, h: 1080 }, entries: [], state: "" };
+    return {
+      displayRes: { w: 1024, h: 512 },
+      entries: [],
+      adData: {},
+      state: "",
+      auto: true,
+    };
+  },
+  mounted() {
+    if (this.auto) {
+      setInterval(() => {
+        this.changeState();
+      }, 10 * 1000);
+    }
   },
   methods: {
     async getData() {
-      let { data } = await this.$axios.get("/api/data");
-      console.log(data);
-      this.entries = data;
-      this.state = "leaderboard";
+      try {
+        let { data } = await this.$axios.get("/api/data");
+        this.entries = data;
+        this.state = "leaderboard";
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getAd() {
+      try {
+        let { data } = await this.$axios.get("/api/ad");
+        if (!data) throw "No data";
+        console.log(data);
+        this.adData = data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async changeState(state) {
+      if (!state) {
+        if (this.state == "leaderboard") state = "ads";
+        else state = "leaderboard";
+      }
+
+      if (state == "leaderboard") {
+        await this.getData();
+        this.state = "leaderboard";
+      } else if (state == "ads") {
+        await this.getAd();
+        this.state = "ads";
+      }
     },
   },
 };
@@ -70,7 +114,7 @@ body {
     opacity: 0;
   }
   .leaderboard {
-    position: relative;
+    position: absolute;
     width: 100%;
     height: 100%;
     display: flex;
@@ -94,38 +138,53 @@ body {
       }
     }
     .header {
-      font-size: 120px;
+      font-size: 60px;
       text-align: center;
-      margin: 50px 0 100px 0;
+      margin: 10px 0 20px 0;
       font-weight: bold;
     }
     .entries {
       display: flex;
       flex-direction: column;
       width: 70%;
-      gap: 20px;
+      gap: 10px;
       .entry {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 30px;
+        padding: 5px 30px;
         height: 50px;
-        font-size: 48px;
-        border: 1px #888 solid;
+        font-size: 28px;
+        border: 1px #fff solid;
         border-radius: 30px;
         transform: translateX(1000px);
         opacity: 0;
+        .position {
+          width: 200px;
+        }
+        .score {
+          width: 200px;
+          text-align: right;
+        }
       }
     }
     .logo {
       position: absolute;
       bottom: 20px;
       right: 20px;
-      width: 160px;
+      width: 86px;
       filter: invert(1);
     }
   }
   .ads {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: all 1s ease;
+    &.show {
+      opacity: 1;
+    }
   }
 }
 </style>
