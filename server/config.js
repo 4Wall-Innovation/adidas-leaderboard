@@ -1,3 +1,3 @@
 module.exports = {
-  dbServerURL: "http://10.0.0.50/scoreboard.php",
+  dbServerURL: "http://127.0.0.1:5000",
 };

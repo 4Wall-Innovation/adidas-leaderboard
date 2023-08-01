@@ -10,24 +10,48 @@
       <button @click="state = 'ads'">Ads</button>
     </div>
     <div class="leaderboard" :class="{ show: state == 'leaderboard' }">
-      <div class="header">Leaderboard</div>
+      <video
+        v-if="state == 'leaderboard'"
+        src="/coins.webm"
+        autoplay
+        muted
+        class="coins"
+      ></video>
       <div class="entries">
+        <div class="table__header">
+          <div class="gap"></div>
+          <div class="column__header">sprint</div>
+          <div class="column__header">dribble</div>
+          <div class="column__header">reaction</div>
+          <div class="column__header">points</div>
+        </div>
         <div
           v-for="(entry, index) in entries"
-          :key="index"
+          :key="`entry-${index}`"
           class="entry"
+          :class="{ top__three: index <= 2 }"
           :style="`transition-delay: ${
             state == 'leaderboard' ? 1 + index * 0.2 : index * 0.06
           }s;`"
         >
           <span class="position">{{ index + 1 }}.</span>
           <span class="name">{{ entry.name }} {{ entry.surname }}</span>
+          <div class="game__time">{{ renderTime(entry.Game1) }}</div>
+          <div class="game__time">{{ renderTime(entry.Game2) }}</div>
+          <div class="game__time">{{ renderTime(entry.Game3) }}</div>
           <div class="score">
             <AnimatedInteger :number="entry.Score" />
           </div>
         </div>
+        <div v-if="index >= 3 && index < 9" class="divider"></div>
       </div>
-      <img src="~/assets/images/adidas-logo.png" alt="" class="logo" />
+      <div class="ticker">
+        <div
+          v-for="tickerEntry in tickerEntries"
+          :key="`tickerEntry-${index}`"
+          class="ticker__entry"
+        ></div>
+      </div>
     </div>
     <div class="ads" :class="{ show: state == 'ads' }">
       <MediaViewer :file="adData" />
@@ -39,7 +63,7 @@
 export default {
   data() {
     return {
-      displayRes: { w: 1024, h: 512 },
+      displayRes: { w: 768, h: 512 },
       entries: [],
       adData: {},
       state: "",
@@ -69,6 +93,9 @@ export default {
       } catch (error) {
         console.error(error);
       }
+    },
+    renderTime(milliseconds) {
+      return `${Math.round((milliseconds / 1000) * 100) / 100}"`;
     },
     clearLeaderboard() {
       this.entries = [];
@@ -103,19 +130,19 @@ export default {
 </script>
 <style lang="scss">
 @font-face {
-  font-family: TeXGyreAdventor;
-  src: url("@/assets/fonts/texgyreadventor-regular.otf") format("opentype");
+  font-family: adineuePRO;
+  src: url("@/assets/fonts/adineuePRO-Regular.otf") format("opentype");
 }
 @font-face {
-  font-family: TeXGyreAdventor;
+  font-family: adineuePRO;
   font-weight: bold;
-  src: url("@/assets/fonts/texgyreadventor-bold.otf") format("opentype");
+  src: url("@/assets/fonts/adineuePRO-Bold.otf") format("opentype");
 }
 
 body {
   background: #000;
   margin: 0;
-  font-family: TeXGyreAdventor;
+  font-family: adineuePRO;
 }
 .display {
   position: absolute;
@@ -146,6 +173,11 @@ body {
       rgba(0, 28, 81, 1) 100%
     );
     color: #fff;
+    .coins {
+      position: absolute;
+      z-index: 2;
+    }
+
     &.show {
       transition: all 1s 0s ease;
       opacity: 1;

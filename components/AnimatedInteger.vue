@@ -1,6 +1,6 @@
 <template>
   <div class="animated__integer" :class="{ pulse }">
-    {{ displayNumber }}
+    {{ renderNumber(displayNumber) }}
   </div>
 </template>
 
@@ -19,7 +19,11 @@ export default {
   ready() {
     this.displayNumber = this.number ? this.number : 0;
   },
-
+  methods: {
+    renderNumber(number) {
+      return number.toLocaleString("en-US");
+    },
+  },
   watch: {
     number: {
       immediate: true,
