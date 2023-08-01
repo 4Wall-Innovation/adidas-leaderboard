@@ -4,6 +4,7 @@ const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
 const { readdir } = require("fs").promises;
 const path = require("path");
+const { dbServerURL } = require("./config.js");
 
 let lastAdFilename;
 
@@ -43,7 +44,7 @@ app.get("/ad", async (req, res) => {
 
 app.get("/data", async (req, res) => {
   try {
-    let { data } = await axios.get("http://localhost:5000");
+    let { data } = await axios.get(dbServerURL);
     if (!data) throw "No data";
     let jsonObj = parser.parse(data);
     if (!jsonObj) throw "No JSON Object";
