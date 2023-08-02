@@ -145,7 +145,7 @@ export default {
         this.topThreeEntries = topThreeEntries;
         this.topThreeUpdated = topThreeUpdated;
         this.tickerEntries = tickerEntries;
-        // this.runTicker(this.tickerEntries.length);
+        this.runTicker(this.tickerEntries.length);
       } catch (error) {
         console.error(error);
       }
