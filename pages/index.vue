@@ -4,6 +4,22 @@
     :style="`width:${displayRes.w}px;height:${displayRes.h}px;`"
     @click="getData()"
   >
+    <video
+      v-if="runCoins"
+      src="videos/coins.webm"
+      autoplay
+      muted
+      class="coins"
+      @ended="coinsFinished()"
+    ></video>
+    <div class="highlight" :class="{ show: showHighlightUser }">
+      <div class="container">
+        <div class="title">Winner</div>
+        <div class="name">
+          {{ highlightedUser?.name }} {{ highlightedUser?.surname }}
+        </div>
+      </div>
+    </div>
     <div class="leaderboard" :class="{ show: state == 'leaderboard' }">
       <video
         src="videos/header.webm"
@@ -12,14 +28,7 @@
         muted
         class="header"
       ></video>
-      <video
-        v-if="topThreeUpdated"
-        src="videos/coins.webm"
-        autoplay
-        muted
-        class="coins"
-        @ended="coinsFinished()"
-      ></video>
+
       <div class="entries">
         <div class="table__header">
           <div class="gap"></div>
@@ -102,25 +111,43 @@
 export default {
   data() {
     return {
+      socket: null,
       displayRes: { w: 768, h: 512 },
       entries: [],
       topThreeEntries: [],
       tickerEntries: [],
-      topThreeUpdated: true,
+      runCoins: true,
       adData: {},
       state: "",
       auto: true,
       leaderboardSeconds: 29,
       adSeconds: 10,
       timeout: null,
+      showHighlightUser: false,
+      highlightedUser: null,
     };
   },
   mounted() {
+    this.socket = this.$nuxtSocket({
+      reconnection: true,
+      teardown: false,
+      transports: ["websocket"],
+    });
+    this.socket.on("highlightUser", this.highlightUser);
     this.run();
   },
   methods: {
+    async highlightUser(user) {
+      console.log(user);
+      this.highlightedUser = user;
+      this.showHighlightUser = true;
+      this.runCoins = true;
+      await new Promise((r) => setTimeout(r, 10000));
+      this.showHighlightUser = false;
+      this.runCoins = false;
+    },
     coinsFinished() {
-      this.topThreeUpdated = false;
+      this.runCoins = false;
     },
     async run() {
       clearTimeout(this.timeout);
@@ -143,9 +170,11 @@ export default {
         } = data;
         this.entries = entries;
         this.topThreeEntries = topThreeEntries;
-        this.topThreeUpdated = topThreeUpdated;
-        this.tickerEntries = tickerEntries;
-        this.runTicker(this.tickerEntries.length);
+        if (!this.showHighlightUser) this.runCoins = topThreeUpdated;
+        if (tickerEntries) {
+          this.tickerEntries = tickerEntries;
+          this.runTicker(this.tickerEntries.length);
+        }
       } catch (error) {
         console.error(error);
       }
@@ -251,7 +280,42 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-
+  .coins {
+    position: absolute;
+    z-index: 15;
+  }
+  .highlight {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    padding: 100px;
+    background: #0008;
+    opacity: 0;
+    transform: scale(0);
+    transition: 0.5s all ease;
+    &.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      background: #fff;
+      .title {
+        font-size: 60px;
+        font-weight: bold;
+      }
+      .name {
+        font-size: 72px;
+      }
+    }
+  }
   .leaderboard {
     width: 100%;
     flex-grow: 1;
@@ -265,10 +329,7 @@ body {
     .header {
       position: absolute;
     }
-    .coins {
-      position: absolute;
-      z-index: 5;
-    }
+
     &.show {
       transition: all 0.4s 0s ease;
       opacity: 1;
