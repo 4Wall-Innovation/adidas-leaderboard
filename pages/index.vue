@@ -109,7 +109,7 @@ export default {
       topThreeUpdated: true,
       adData: {},
       state: "",
-      auto: false,
+      auto: true,
       leaderboardSeconds: 30,
       adSeconds: 10,
       timeout: null,
