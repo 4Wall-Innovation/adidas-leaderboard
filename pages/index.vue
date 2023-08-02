@@ -152,18 +152,26 @@ export default {
     },
     runTicker(numOfEntries) {
       let tickerEl = this.$refs.tickerSlider;
-      let steps = [];
-      for (let index = 0; index < numOfEntries; index++) {
-        steps.push({ transform: `translateX(${-index * 1200}px)` });
-        steps.push({ transform: `translateX(${-index * 1200}px)` });
-        steps.push({ transform: `translateX(${-index * 1200}px)` });
-      }
-      const timing = {
-        duration: this.leaderboardSeconds * 1000,
+      tickerEl.style.transform = "translateX(0px)";
+
+      if (numOfEntries <= 1) return;
+
+      let timing = {
+        delay: 0,
+        duration: 600,
         iterations: 1,
+        easing: "ease",
         fill: "forwards",
       };
-      tickerEl.animate(steps, timing);
+      for (let index = 0; index < numOfEntries; index++) {
+        timing.delay =
+          (index + 1) * ((this.leaderboardSeconds * 1000) / numOfEntries);
+        let steps = [
+          { transform: `translateX(${index * -1200}px)` },
+          { transform: `translateX(${(index + 1) * -1200}px)` },
+        ];
+        tickerEl.animate(steps, timing);
+      }
     },
     renderTime(milliseconds) {
       return `${Math.round((milliseconds / 1000) * 100) / 100}"`;
