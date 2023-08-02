@@ -392,6 +392,7 @@ body {
       }
       .divider {
         margin: 2px 0px;
+        position: relative;
       }
     }
   }
