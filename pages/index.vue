@@ -69,7 +69,7 @@
           />
         </div>
       </div>
-      <div v-if="tickerEntries.length > 0" class="ticker">
+      <div v-show="tickerEntries.length > 0" class="ticker">
         <img class="divider" src="~/assets/images/dividerGreen.png" alt="" />
         <div ref="tickerSlider" class="ticker__slider">
           <div
