@@ -110,7 +110,7 @@ export default {
       adData: {},
       state: "",
       auto: true,
-      leaderboardSeconds: 30,
+      leaderboardSeconds: 29,
       adSeconds: 10,
       timeout: null,
     };
