@@ -9,7 +9,7 @@ export default {
       lang: "en",
     },
 
-    telemetry:false,
+    telemetry: false,
 
     meta: [
       { charset: "utf-8" },
@@ -49,5 +49,21 @@ export default {
 
   serverMiddleware: [{ path: "/api", handler: "~/server/index.js" }],
 
-  server:{host:"0.0.0.0",port:3000}
+  server: { host: "0.0.0.0", port: 3000 },
+  build: {
+    extend(config, ctx) {
+      config.module.rules.push({
+        test: /\.(ogg|mp3|wav|mpe?g)$/i,
+        loader: "file-loader",
+        options: {
+          name: "[path][name].[ext]",
+        },
+      });
+    },
+    // loaders: {
+    //   vue: {
+    //     compiler: require("vue-template-babel-compiler"),
+    //   },
+    // },
+  },
 };

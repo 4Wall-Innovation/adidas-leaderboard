@@ -2,20 +2,23 @@
   <div
     class="display"
     :style="`width:${displayRes.w}px;height:${displayRes.h}px;`"
-    @click="run()"
+    @click="getData()"
   >
-    <div class="buttons">
-      <button @click="getData">Get Data</button>
-      <button @click="state = 'leaderboard'">Leaderboard</button>
-      <button @click="state = 'ads'">Ads</button>
-    </div>
     <div class="leaderboard" :class="{ show: state == 'leaderboard' }">
       <video
-        v-if="state == 'leaderboard'"
-        src="/coins.webm"
+        src="videos/header.webm"
+        ref="headerVideo"
+        autoplay
+        muted
+        class="header"
+      ></video>
+      <video
+        v-if="topThreeUpdated"
+        src="videos/coins.webm"
         autoplay
         muted
         class="coins"
+        @ended="coinsFinished()"
       ></video>
       <div class="entries">
         <div class="table__header">
@@ -25,32 +28,68 @@
           <div class="column__header">reaction</div>
           <div class="column__header">points</div>
         </div>
+        <div class="top__three">
+          <div
+            v-for="(entry, index) in topThreeEntries"
+            :key="`entry-${index}`"
+            class="entry"
+          >
+            <div class="entry__row">
+              <span class="position">{{ entry.position }}</span>
+              <span class="name">{{ entry.name }} {{ entry.surname }}</span>
+              <div class="game__time">{{ renderTime(entry.game1) }}</div>
+              <div class="game__time">{{ renderTime(entry.game2) }}</div>
+              <div class="game__time">{{ renderTime(entry.game3) }}</div>
+              <div class="score">
+                {{ renderNumber(entry.total) }}
+              </div>
+            </div>
+          </div>
+        </div>
         <div
           v-for="(entry, index) in entries"
           :key="`entry-${index}`"
           class="entry"
-          :class="{ top__three: index <= 2 }"
-          :style="`transition-delay: ${
-            state == 'leaderboard' ? 1 + index * 0.2 : index * 0.06
-          }s;`"
         >
-          <span class="position">{{ index + 1 }}.</span>
-          <span class="name">{{ entry.name }} {{ entry.surname }}</span>
-          <div class="game__time">{{ renderTime(entry.Game1) }}</div>
-          <div class="game__time">{{ renderTime(entry.Game2) }}</div>
-          <div class="game__time">{{ renderTime(entry.Game3) }}</div>
-          <div class="score">
-            <AnimatedInteger :number="entry.Score" />
+          <div class="entry__row">
+            <span class="position">{{ entry.position }}</span>
+            <span class="name">{{ entry.name }} {{ entry.surname }}</span>
+            <div class="game__time">{{ renderTime(entry.game1) }}</div>
+            <div class="game__time">{{ renderTime(entry.game2) }}</div>
+            <div class="game__time">{{ renderTime(entry.game3) }}</div>
+            <div class="score">
+              {{ renderNumber(entry.total) }}
+            </div>
           </div>
+          <img
+            v-if="index < 6"
+            class="divider"
+            src="~/assets/images/divider.png"
+            alt=""
+          />
         </div>
-        <div v-if="index >= 3 && index < 9" class="divider"></div>
       </div>
       <div class="ticker">
-        <div
-          v-for="tickerEntry in tickerEntries"
-          :key="`tickerEntry-${index}`"
-          class="ticker__entry"
-        ></div>
+        <img class="divider" src="~/assets/images/dividerGreen.png" alt="" />
+        <div ref="tickerSlider" class="ticker__slider">
+          <div
+            v-for="(tickerEntry, index) in tickerEntries"
+            :key="`tickerEntry-${index}`"
+            class="ticker__entry"
+          >
+            <span class="position">{{ tickerEntry.position }}</span>
+            <span class="name"
+              >{{ tickerEntry.name }} {{ tickerEntry.surname }}</span
+            >
+            <div class="game__time">{{ renderTime(tickerEntry.game1) }}</div>
+            <div class="game__time">{{ renderTime(tickerEntry.game2) }}</div>
+            <div class="game__time">{{ renderTime(tickerEntry.game3) }}</div>
+            <div class="score">
+              {{ renderNumber(tickerEntry.total) }}
+            </div>
+          </div>
+        </div>
+        <img class="divider" src="~/assets/images/dividerGreen.png" alt="" />
       </div>
     </div>
     <div class="ads" :class="{ show: state == 'ads' }">
@@ -65,10 +104,13 @@ export default {
     return {
       displayRes: { w: 768, h: 512 },
       entries: [],
+      topThreeEntries: [],
+      tickerEntries: [],
+      topThreeUpdated: true,
       adData: {},
       state: "",
-      auto: true,
-      leaderboardSeconds: 10,
+      auto: false,
+      leaderboardSeconds: 30,
       adSeconds: 10,
       timeout: null,
     };
@@ -77,6 +119,9 @@ export default {
     this.run();
   },
   methods: {
+    coinsFinished() {
+      this.topThreeUpdated = false;
+    },
     async run() {
       clearTimeout(this.timeout);
       await this.changeState();
@@ -89,15 +134,45 @@ export default {
     async getData() {
       try {
         let { data } = await this.$axios.get("/api/data");
-        this.entries = data;
+        let {
+          entries,
+          topThreeEntries,
+          tickerEntries,
+          topThreeUpdates,
+          topThreeUpdated,
+        } = data;
+        this.entries = entries;
+        this.topThreeEntries = topThreeEntries;
+        this.topThreeUpdated = topThreeUpdated;
+        this.tickerEntries = tickerEntries;
+        // this.runTicker(this.tickerEntries.length);
       } catch (error) {
         console.error(error);
       }
     },
+    runTicker(numOfEntries) {
+      let tickerEl = this.$refs.tickerSlider;
+      let steps = [];
+      for (let index = 0; index < numOfEntries; index++) {
+        steps.push({ transform: `translateX(${-index * 1200}px)` });
+        steps.push({ transform: `translateX(${-index * 1200}px)` });
+        steps.push({ transform: `translateX(${-index * 1200}px)` });
+      }
+      const timing = {
+        duration: this.leaderboardSeconds * 1000,
+        iterations: 1,
+        fill: "forwards",
+      };
+      tickerEl.animate(steps, timing);
+    },
     renderTime(milliseconds) {
       return `${Math.round((milliseconds / 1000) * 100) / 100}"`;
     },
-    clearLeaderboard() {
+    renderNumber(number) {
+      if (number != undefined) return number.toLocaleString("en-US");
+      return "";
+    },
+    resetLeaderboard() {
       this.entries = [];
     },
     async getAd() {
@@ -116,13 +191,16 @@ export default {
       }
       if (state == "leaderboard") {
         await this.getData();
+        let headerVideo = this.$refs.headerVideo;
+        headerVideo.currentTime = 0;
+        headerVideo.play();
         await new Promise((r) => setTimeout(r, 250));
         this.state = "leaderboard";
       } else if (state == "ads") {
         await this.getAd();
         this.state = "ads";
         await new Promise((r) => setTimeout(r, 1000));
-        this.clearLeaderboard();
+        this.resetLeaderboard();
       }
     },
   },
@@ -138,101 +216,186 @@ export default {
   font-weight: bold;
   src: url("@/assets/fonts/adineuePRO-Bold.otf") format("opentype");
 }
-
+@font-face {
+  font-family: adineuePRO;
+  font-weight: bold;
+  font-style: italic;
+  src: url("@/assets/fonts/adineuePRO-BoldItalic.otf") format("opentype");
+}
+@font-face {
+  font-family: adineuePRO;
+  font-weight: bolder;
+  src: url("@/assets/fonts/adineuePRO-Black.otf") format("opentype");
+}
+@font-face {
+  font-family: adineuePRO;
+  font-weight: lighter;
+  src: url("@/assets/fonts/adineuePRO-light.otf") format("opentype");
+}
 body {
-  background: #000;
+  background: #fff;
   margin: 0;
   font-family: adineuePRO;
 }
 .display {
   position: absolute;
-  background: #fff;
+  background: #000;
   overflow: hidden;
-  .buttons {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    z-index: 1;
-    opacity: 0;
-  }
+  display: flex;
+  flex-direction: column;
+
   .leaderboard {
-    position: absolute;
     width: 100%;
-    height: 100%;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     opacity: 0;
-    transition: all 0.6s 0.2s ease;
+    transition: all 0.4s 0.2s ease;
     z-index: 1;
-
-    background: rgb(0, 71, 135);
-    background: radial-gradient(
-      circle,
-      rgba(0, 71, 135, 1) 0%,
-      rgba(0, 28, 81, 1) 100%
-    );
     color: #fff;
+    .header {
+      position: absolute;
+    }
     .coins {
       position: absolute;
       z-index: 2;
     }
-
     &.show {
-      transition: all 1s 0s ease;
+      transition: all 0.4s 0s ease;
       opacity: 1;
-      .entries .entry {
-        transition: all 0.6s ease;
-        transform: translateX(0px);
-        opacity: 1;
-      }
-      .logo {
-        transition: 1s 2.5s all ease;
-        opacity: 1;
-      }
     }
-    .header {
-      font-size: 60px;
-      text-align: center;
-      margin: 10px 0 20px 0;
-      font-weight: bold;
-    }
+
     .entries {
       display: flex;
       flex-direction: column;
-      width: 70%;
-      gap: 10px;
-      .entry {
+      align-items: center;
+      margin-top: 160px;
+      position: relative;
+      z-index: 3;
+      width: 100%;
+      height: 100%;
+      .table__header {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 5px 30px;
-        height: 50px;
-        font-size: 28px;
-        border: 1px #fff solid;
-        border-radius: 30px;
-        transform: translateX(1000px);
-        opacity: 0;
-        .position {
-          width: 200px;
+        width: 600px;
+        color: #b4ed37;
+        margin-bottom: 10px;
+        .gap {
+          width: 260px;
         }
-        .score {
-          display: flex;
-          justify-content: flex-end;
-          width: 200px;
+        .column__header {
+          width: 80px;
         }
       }
+
+      .entry {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-weight: normal;
+        font-size: 14px;
+        .entry__row {
+          display: flex;
+          width: 600px;
+
+          .position {
+            width: 25px;
+            margin-right: 35px;
+            text-align: right;
+            font-weight: bold;
+          }
+          .name {
+            width: 200px;
+            font-weight: bold;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+          }
+          .game__time {
+            width: 80px;
+            letter-spacing: 2px;
+          }
+          .score {
+            letter-spacing: 2px;
+            font-weight: bold;
+          }
+        }
+      }
+      .top__three {
+        .entry {
+          font-size: 24px;
+          margin-bottom: 2px;
+
+          .position {
+            color: #b4ed37;
+            font-weight: bold;
+            font-style: italic;
+          }
+          .name {
+            font-weight: bold;
+            font-style: italic;
+          }
+        }
+        margin-bottom: 6px;
+      }
+      .divider {
+        margin: 2px 0px;
+      }
     }
-    .logo {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      width: 86px;
-      filter: invert(1);
-      transition: 1s 0s all ease;
-      opacity: 0;
+    .ticker {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      .ticker__slider {
+        display: flex;
+        justify-content: left;
+        margin: 6px 0px;
+        gap: 600px;
+        margin-left: 84px;
+        transform: translateX(0px);
+
+        .ticker__entry {
+          display: flex;
+          align-items: center;
+          font-weight: normal;
+          font-size: 24px;
+          width: 600px;
+          min-width: 600px;
+
+          .position {
+            width: 25px;
+            margin-right: 35px;
+            text-align: right;
+            color: #b4ed37;
+            font-weight: bold;
+            font-style: italic;
+          }
+          .name {
+            width: 200px;
+            font-weight: bold;
+            font-style: italic;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+          }
+          .game__time {
+            width: 80px;
+            letter-spacing: 2px;
+          }
+          .score {
+            letter-spacing: 2px;
+            font-weight: bold;
+          }
+        }
+      }
+      .divider {
+        margin: 2px 0px;
+      }
     }
   }
+
   .ads {
     position: absolute;
     width: 100%;
