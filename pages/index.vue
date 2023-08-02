@@ -310,6 +310,8 @@ body {
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
+            width: 190px;
+            margin-right: 10px;
           }
           .game__time {
             width: 80px;
@@ -373,7 +375,8 @@ body {
             font-style: italic;
           }
           .name {
-            width: 200px;
+            width: 190px;
+            margin-right: 10px;
             font-weight: bold;
             font-style: italic;
             text-overflow: ellipsis;
