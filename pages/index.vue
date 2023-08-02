@@ -267,7 +267,7 @@ body {
     }
     .coins {
       position: absolute;
-      z-index: 2;
+      z-index: 5;
     }
     &.show {
       transition: all 0.4s 0s ease;
