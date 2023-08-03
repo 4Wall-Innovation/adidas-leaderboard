@@ -92,7 +92,6 @@ router.get("/data", async (req, res) => {
     if (!data) throw "No data";
     let jsonObj = parser.parse(data);
     if (!jsonObj) throw "No JSON Object";
-    console.log(JSON.stringify(jsonObj));
     let entries = jsonObj?.xml?.entry || [];
     if (!Array.isArray(entries)) entries = [entries];
 
