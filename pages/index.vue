@@ -2,7 +2,7 @@
   <div
     class="display"
     :style="`width:${displayRes.w}px;height:${displayRes.h}px;`"
-    @click="getData()"
+    @click="run()"
   >
     <video
       v-if="runCoins"
@@ -332,6 +332,7 @@ body {
     transition: all 0.4s 0.2s ease;
     z-index: 1;
     color: #fff;
+    background: #000;
     .header {
       position: absolute;
       top: -26px;
