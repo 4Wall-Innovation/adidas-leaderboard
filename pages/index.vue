@@ -121,7 +121,7 @@ export default {
       state: "",
       auto: true,
       leaderboardSeconds: 29,
-      adSeconds: 10,
+      adSeconds: 24,
       timeout: null,
       showHighlightUser: false,
       highlightedUser: null,
