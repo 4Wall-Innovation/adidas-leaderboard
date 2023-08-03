@@ -328,6 +328,7 @@ body {
     color: #fff;
     .header {
       position: absolute;
+      top: -16px;
     }
 
     &.show {
@@ -339,7 +340,7 @@ body {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 160px;
+      margin-top: 140px;
       position: relative;
       z-index: 3;
       width: 100%;
@@ -394,7 +395,7 @@ body {
       }
       .top__three {
         .entry {
-          font-size: 24px;
+          font-size: 18px;
           margin-bottom: 2px;
 
           .position {
@@ -422,7 +423,6 @@ body {
       .ticker__slider {
         display: flex;
         justify-content: left;
-        margin: 6px 0px;
         gap: 600px;
         margin-left: 84px;
         transform: translateX(0px);
@@ -463,7 +463,7 @@ body {
         }
       }
       .divider {
-        margin: 2px 0px;
+        // margin: 5px 0px -5px 0px;
         position: relative;
       }
     }
