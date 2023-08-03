@@ -52,7 +52,7 @@ const calcUpdates = (entries) => {
 
   let newEntries = entries.filter((entry) => {
     let match = latestEntries.find(
-      (latestEntry) => latestEntry.adidasid == entry.adidasid
+      (latestEntry) => latestEntry.adidasID == entry.adidasID
     );
     return !match;
   });
@@ -63,7 +63,7 @@ const calcUpdates = (entries) => {
 
   let updatedEntries = entries.filter((entry) => {
     let match = latestEntries.find(
-      (latestEntry) => latestEntry.adidasid == entry.adidasid
+      (latestEntry) => latestEntry.adidasID == entry.adidasID
     );
     return !match || match.position != entry.position;
   });
@@ -92,6 +92,7 @@ router.get("/data", async (req, res) => {
     if (!data) throw "No data";
     let jsonObj = parser.parse(data);
     if (!jsonObj) throw "No JSON Object";
+    console.log(JSON.stringify(jsonObj));
     let entries = jsonObj?.xml?.entry || [];
     if (!Array.isArray(entries)) entries = [entries];
 
@@ -107,6 +108,7 @@ router.get("/data", async (req, res) => {
         game3: entry.game3,
         total: entry.total,
         position: index + 1,
+        timestamp: entry.timestampEnd,
       };
     });
     let { newEntries, topTenUpdates } = calcUpdates(entries);

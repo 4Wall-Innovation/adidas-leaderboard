@@ -2,7 +2,7 @@
   <div class="container">
     <h2>New Entry</h2>
     <b-form-input
-      v-model="user.adidasid"
+      v-model="user.adidasID"
       placeholder="Adidas Id"
     ></b-form-input>
     <b-form-input v-model="user.name" placeholder="Name"></b-form-input>
@@ -22,7 +22,7 @@ export default {
   data() {
     return {
       user: {
-        adidasid: "",
+        adidasID: "",
         name: "",
         surname: "",
         game1: 0,

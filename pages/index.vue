@@ -120,7 +120,7 @@ export default {
       adData: {},
       state: "",
       auto: true,
-      leaderboardSeconds: 29,
+      leaderboardSeconds: 27.5,
       adSeconds: 24,
       timeout: null,
       showHighlightUser: false,
