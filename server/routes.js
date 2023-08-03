@@ -63,9 +63,9 @@ const calcUpdates = (entries) => {
     let match = latestEntries.find((latestEntry) => latestEntry.id == entry.id);
     return !match || match.position != entry.position;
   });
-  let topThreeUpdates = updatedEntries.filter((update) => update.position <= 3);
+  let topTenUpdates = updatedEntries.filter((update) => update.position <= 10);
 
-  return { newEntries, topThreeUpdates };
+  return { newEntries, topTenUpdates };
 };
 
 router.get("/alldata", async (req, res) => {
@@ -105,11 +105,11 @@ router.get("/data", async (req, res) => {
         position: index + 1,
       };
     });
-    let { newEntries, topThreeUpdates } = calcUpdates(entries);
+    let { newEntries, topTenUpdates } = calcUpdates(entries);
     latestEntries = [...entries];
 
     let topThreeEntries = entries.slice(0, 3);
-    let topThreeUpdated = topThreeUpdates.length > 0;
+    let topThreeUpdated = topTenUpdates.length > 0;
 
     entries = entries.slice(3, 10);
     tickerEntries = newEntries;
