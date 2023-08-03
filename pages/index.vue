@@ -233,6 +233,8 @@ export default {
         headerVideo.play();
         await new Promise((r) => setTimeout(r, 250));
         this.state = "leaderboard";
+        await new Promise((r) => setTimeout(r, 1000));
+        this.adData = {};
       } else if (state == "ads") {
         await this.getAd();
         this.state = "ads";
