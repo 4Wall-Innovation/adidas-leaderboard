@@ -120,7 +120,7 @@ export default {
       adData: {},
       state: "",
       auto: true,
-      leaderboardSeconds: 29,
+      leaderboardSeconds: 5,
       adSeconds: 10,
       timeout: null,
       showHighlightUser: false,
@@ -292,13 +292,17 @@ body {
     padding: 100px;
     background: #0008;
     opacity: 0;
-    transform: scale(0);
     transition: 0.5s all ease;
     &.show {
       opacity: 1;
-      transform: scale(1);
+      .container {
+        transform: scale(1);
+      }
     }
     .container {
+      transform: scale(0);
+      transition: 0.5s all ease;
+
       display: flex;
       flex-direction: column;
       justify-content: center;
