@@ -51,7 +51,9 @@ const calcUpdates = (entries) => {
   }
 
   let newEntries = entries.filter((entry) => {
-    let match = latestEntries.find((latestEntry) => latestEntry.id == entry.id);
+    let match = latestEntries.find(
+      (latestEntry) => latestEntry.adidasid == entry.adidasid
+    );
     return !match;
   });
 
@@ -60,7 +62,9 @@ const calcUpdates = (entries) => {
   });
 
   let updatedEntries = entries.filter((entry) => {
-    let match = latestEntries.find((latestEntry) => latestEntry.id == entry.id);
+    let match = latestEntries.find(
+      (latestEntry) => latestEntry.adidasid == entry.adidasid
+    );
     return !match || match.position != entry.position;
   });
   let topTenUpdates = updatedEntries.filter((update) => update.position <= 10);

@@ -1,7 +1,10 @@
 <template>
   <div class="container">
     <h2>New Entry</h2>
-    <b-form-input v-model="user.id" placeholder="Id"></b-form-input>
+    <b-form-input
+      v-model="user.adidasid"
+      placeholder="Adidas Id"
+    ></b-form-input>
     <b-form-input v-model="user.name" placeholder="Name"></b-form-input>
     <b-form-input v-model="user.surname" placeholder="Surname"></b-form-input>
     <b-form-input v-model="user.game1" placeholder="Game 1"></b-form-input>
@@ -19,7 +22,7 @@ export default {
   data() {
     return {
       user: {
-        id: "",
+        adidasid: "",
         name: "",
         surname: "",
         game1: 0,
