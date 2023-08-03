@@ -13,7 +13,7 @@
     ></video>
     <video
       v-if="runCoinsHorizontal"
-      src="videos/coinsHorizontal.webm"
+      src="videos/coinshorizontal.webm"
       autoplay
       muted
       class="coins"
