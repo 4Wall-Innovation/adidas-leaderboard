@@ -125,7 +125,6 @@ export default {
       timeout: null,
       showHighlightUser: false,
       highlightedUser: null,
-      autoMode: "leaderboard",
     };
   },
   mounted() {
@@ -152,9 +151,7 @@ export default {
     },
     async run() {
       clearTimeout(this.timeout);
-      if (this.autoMode == "all") await this.changeState();
-      else if (this.autoMode == "leaderboard") this.getData();
-
+      await this.changeState();
       if (this.auto) {
         this.timeout = setTimeout(() => {
           this.run(true);
