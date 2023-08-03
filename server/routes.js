@@ -125,5 +125,15 @@ router.get("/data", async (req, res) => {
     return res.status(500).send(error.message);
   }
 });
-
+router.put("/data", async (req, res) => {
+  try {
+    console.log("PUT", dbServerURL, req.body);
+    await axios.put(dbServerURL, req.body);
+    console.log("done");
+    return res.send();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(error.message);
+  }
+});
 module.exports = router;
