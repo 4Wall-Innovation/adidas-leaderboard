@@ -165,12 +165,12 @@ export default {
           entries,
           topThreeEntries,
           tickerEntries,
-          topThreeUpdates,
-          topThreeUpdated,
+          topTenUpdates,
+          topTenUpdated,
         } = data;
         this.entries = entries;
         this.topThreeEntries = topThreeEntries;
-        if (!this.showHighlightUser) this.runCoins = topThreeUpdated;
+        if (!this.showHighlightUser) this.runCoins = topTenUpdated;
         if (tickerEntries) {
           this.tickerEntries = tickerEntries;
           this.runTicker(this.tickerEntries.length);

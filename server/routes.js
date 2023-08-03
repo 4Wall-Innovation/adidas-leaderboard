@@ -47,7 +47,7 @@ router.get("/ad", async (req, res) => {
 const calcUpdates = (entries) => {
   if (latestEntries.length == 0) {
     latestEntries = entries;
-    return { recentUpdates: [], topThreeUpdates: [] };
+    return { recentUpdates: [], topTenUpdates: [] };
   }
 
   let newEntries = entries.filter((entry) => {
@@ -109,7 +109,7 @@ router.get("/data", async (req, res) => {
     latestEntries = [...entries];
 
     let topThreeEntries = entries.slice(0, 3);
-    let topThreeUpdated = topTenUpdates.length > 0;
+    let topTenUpdated = topTenUpdates.length > 0;
 
     entries = entries.slice(3, 10);
     tickerEntries = newEntries;
@@ -117,8 +117,8 @@ router.get("/data", async (req, res) => {
       entries,
       topThreeEntries,
       tickerEntries,
-      topThreeUpdated,
-      topThreeUpdates,
+      topTenUpdated,
+      topTenUpdates,
     });
   } catch (error) {
     console.error(error);
