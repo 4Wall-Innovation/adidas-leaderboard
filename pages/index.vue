@@ -267,7 +267,7 @@ export default {
 @font-face {
   font-family: adineuePRO;
   font-weight: lighter;
-  src: url("@/assets/fonts/adineuePRO-light.otf") format("opentype");
+  src: url("@/assets/fonts/adineuePRO-Light.otf") format("opentype");
 }
 body {
   background: #fff;
