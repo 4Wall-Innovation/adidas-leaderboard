@@ -10,6 +10,13 @@
       autoplay
       muted
       class="coins"
+    ></video>
+    <video
+      v-if="runCoinsHorizontal"
+      src="videos/coinsHorizontal.webm"
+      autoplay
+      muted
+      class="coins"
       @ended="coinsFinished()"
     ></video>
     <div class="highlight" :class="{ show: showHighlightUser }">
@@ -116,7 +123,8 @@ export default {
       entries: [],
       topThreeEntries: [],
       tickerEntries: [],
-      runCoins: true,
+      runCoins: false,
+      runCoinsHorizontal: false,
       adData: {},
       state: "",
       auto: true,
@@ -141,13 +149,13 @@ export default {
       console.log(user);
       this.highlightedUser = user;
       this.showHighlightUser = true;
-      this.runCoins = true;
+      this.runCoinsHorizontal = true;
       await new Promise((r) => setTimeout(r, 10000));
       this.showHighlightUser = false;
-      this.runCoins = false;
+      this.runCoinsHorizontal = false;
     },
     coinsFinished() {
-      this.runCoins = false;
+      this.runCoinsHorizontal = false;
     },
     async run() {
       clearTimeout(this.timeout);
@@ -170,7 +178,7 @@ export default {
         } = data;
         this.entries = entries;
         this.topThreeEntries = topThreeEntries;
-        if (!this.showHighlightUser) this.runCoins = topTenUpdated;
+        if (!this.showHighlightUser) this.runCoinsHorizontal = topTenUpdated;
         if (tickerEntries) {
           this.tickerEntries = tickerEntries;
           this.runTicker(this.tickerEntries.length);
