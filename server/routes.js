@@ -99,7 +99,10 @@ router.get("/data", async (req, res) => {
       return !!entries.find((entry) => entry.adidasID == lastEntry.adidasID);
     });
 
-    entries = entries.filter((entry) => !!entry.total);
+    entries = entries.filter(
+      (entry) =>
+        !!entry.total && !!entry.game1 && !!entry.game2 && !!entry.game3
+    );
     entries.sort((a, b) => {
       return b.total - a.total;
     });
