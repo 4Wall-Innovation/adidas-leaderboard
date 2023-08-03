@@ -95,6 +95,10 @@ router.get("/data", async (req, res) => {
     let entries = jsonObj?.xml?.entry || [];
     if (!Array.isArray(entries)) entries = [entries];
 
+    latestEntries = latestEntries.filter((lastEntry) => {
+      return !!entries.find((entry) => entry.adidasID == lastEntry.adidasID);
+    });
+
     entries = entries.filter((entry) => !!entry.total);
     entries.sort((a, b) => {
       return b.total - a.total;
