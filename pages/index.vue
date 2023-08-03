@@ -358,6 +358,7 @@ body {
         }
         .column__header {
           width: 80px;
+          letter-spacing: 1.4px;
         }
       }
 
