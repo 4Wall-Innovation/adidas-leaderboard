@@ -332,7 +332,7 @@ body {
     color: #fff;
     .header {
       position: absolute;
-      top: -16px;
+      top: -26px;
     }
 
     &.show {
@@ -344,7 +344,7 @@ body {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 140px;
+      margin-top: 130px;
       position: relative;
       z-index: 3;
       width: 100%;
@@ -353,7 +353,6 @@ body {
         display: flex;
         width: 600px;
         color: #b4ed37;
-        margin-bottom: 10px;
         .gap {
           width: 260px;
         }
@@ -399,7 +398,7 @@ body {
       }
       .top__three {
         .entry {
-          font-size: 18px;
+          font-size: 21px;
           margin-bottom: 2px;
 
           .position {
