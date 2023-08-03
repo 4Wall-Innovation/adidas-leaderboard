@@ -14,7 +14,7 @@ export default {
   props: ["file"],
   methods: {
     isVideo(file) {
-      if (["mp4", "mov"].includes(file.ext)) return true;
+      if (["mp4", "mov", "webm"].includes(file.ext)) return true;
       return false;
     },
     isImage(file) {
