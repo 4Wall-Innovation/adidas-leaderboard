@@ -114,6 +114,7 @@ router.get("/data", async (req, res) => {
     entries = entries.slice(3, 10);
     tickerEntries = newEntries;
     return res.send({
+      entries,
       topThreeEntries,
       tickerEntries,
       topThreeUpdated,
