@@ -47,12 +47,12 @@ router.get("/ad", async (req, res) => {
 const calcUpdates = (entries) => {
   if (latestEntries.length == 0) {
     latestEntries = entries;
-    return { recentUpdates: [], topTenUpdates: [] };
+    return { newEntries: [], topTenUpdates: [] };
   }
 
   let newEntries = entries.filter((entry) => {
     let match = latestEntries.find(
-      (latestEntry) => latestEntry.adidasID == entry.adidasID
+      (latestEntry) => latestEntry.adidasid == entry.adidasid
     );
     return !match;
   });
@@ -63,12 +63,11 @@ const calcUpdates = (entries) => {
 
   let updatedEntries = entries.filter((entry) => {
     let match = latestEntries.find(
-      (latestEntry) => latestEntry.adidasID == entry.adidasID
+      (latestEntry) => latestEntry.adidasid == entry.adidasid
     );
     return !match || match.position != entry.position;
   });
   let topTenUpdates = updatedEntries.filter((update) => update.position <= 10);
-
   return { newEntries, topTenUpdates };
 };
 
@@ -95,8 +94,21 @@ router.get("/data", async (req, res) => {
     let entries = jsonObj?.xml?.entry || [];
     if (!Array.isArray(entries)) entries = [entries];
 
+    entries = entries.map((entry) => {
+      return {
+        adidasid: entry.adidasid,
+        name: entry.name,
+        surname: entry.surname,
+        game1: entry.game1,
+        game2: entry.game2,
+        game3: entry.game3,
+        total: entry.total,
+        timestamp: entry.timestampEnd,
+      };
+    });
+
     latestEntries = latestEntries.filter((lastEntry) => {
-      return !!entries.find((entry) => entry.adidasID == lastEntry.adidasID);
+      return !!entries.find((entry) => entry.adidasid == lastEntry.adidasid);
     });
 
     entries = entries.filter(
@@ -109,12 +121,7 @@ router.get("/data", async (req, res) => {
     entries = entries.map((entry, index) => {
       return {
         ...entry,
-        game1: entry.game1,
-        game2: entry.game2,
-        game3: entry.game3,
-        total: entry.total,
         position: index + 1,
-        timestamp: entry.timestampEnd,
       };
     });
     let { newEntries, topTenUpdates } = calcUpdates(entries);
@@ -124,7 +131,7 @@ router.get("/data", async (req, res) => {
     let topTenUpdated = topTenUpdates.length > 0;
 
     entries = entries.slice(3, 10);
-    tickerEntries = newEntries;
+    let tickerEntries = [...newEntries];
     return res.send({
       entries,
       topThreeEntries,
