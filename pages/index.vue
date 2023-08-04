@@ -133,6 +133,7 @@ export default {
       timeout: null,
       showHighlightUser: false,
       highlightedUser: null,
+      tickerAnimations: [],
     };
   },
   mounted() {
@@ -178,6 +179,7 @@ export default {
         } = data;
         this.entries = entries;
         this.topThreeEntries = topThreeEntries;
+        console.log("tickerEntries", tickerEntries.length, tickerEntries);
         if (!this.showHighlightUser) this.runCoinsHorizontal = topTenUpdated;
         if (tickerEntries) {
           this.tickerEntries = tickerEntries;
@@ -187,9 +189,10 @@ export default {
         console.error(error);
       }
     },
-    runTicker(numOfEntries) {
+    async runTicker(numOfEntries) {
       let tickerEl = this.$refs.tickerSlider;
       tickerEl.style.transform = "translateX(0px)";
+      await new Promise((r) => setTimeout(r, 250));
 
       if (numOfEntries <= 1) return;
 
@@ -207,7 +210,8 @@ export default {
           { transform: `translateX(${index * -1200}px)` },
           { transform: `translateX(${(index + 1) * -1200}px)` },
         ];
-        tickerEl.animate(steps, timing);
+        let tickerAnimation = tickerEl.animate(steps, timing);
+        this.tickerAnimations.push(tickerAnimation);
       }
     },
     renderTime(milliseconds) {
@@ -219,6 +223,10 @@ export default {
     },
     resetLeaderboard() {
       this.entries = [];
+      for (let animation of this.tickerAnimations) {
+        animation.pause();
+      }
+      this.tickerAnimations = [];
     },
     async getAd() {
       try {
@@ -379,6 +387,8 @@ body {
         align-items: center;
         font-weight: normal;
         font-size: 14px;
+        height: 27px;
+        min-height: 27px;
         .entry__row {
           display: flex;
           width: 600px;
@@ -412,7 +422,8 @@ body {
         .entry {
           font-size: 21px;
           margin-bottom: 2px;
-
+          height: 31.5px;
+          min-height: 31.5px;
           .position {
             color: #b4ed37;
             font-weight: bold;
