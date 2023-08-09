@@ -81,20 +81,25 @@ const transformEntries = (entries) => {
       game2: entry.game2,
       game3: entry.game3,
       total: entry.total,
+      badge: entry.badge,
       timestamp: entry.timestampEnd,
     };
   });
 };
 
+const getEntries = async () => {
+  let { data } = await axios.get(dbServerURL);
+  if (!data) throw "No data";
+  let jsonObj = parser.parse(data);
+  if (!jsonObj) throw "No JSON Object";
+  let entries = jsonObj?.xml?.entry || [];
+  if (!Array.isArray(entries)) entries = [entries];
+  return transformEntries(entries);
+};
+
 router.get("/alldata", async (req, res) => {
   try {
-    let { data } = await axios.get(dbServerURL);
-    if (!data) throw "No data";
-    let jsonObj = parser.parse(data);
-    if (!jsonObj) throw "No JSON Object";
-    let entries = jsonObj?.xml?.entry || [];
-    if (!Array.isArray(entries)) entries = [entries];
-    entries = transformEntries(entries);
+    let entries = await getEntries();
     res.send(entries);
   } catch (error) {
     console.error(error);
@@ -104,16 +109,7 @@ router.get("/alldata", async (req, res) => {
 
 router.get("/data", async (req, res) => {
   try {
-    let { data } = await axios.get(dbServerURL);
-    if (!data) throw "No data";
-    let jsonObj = parser.parse(data);
-    if (!jsonObj) throw "No JSON Object";
-    let entries = jsonObj?.xml?.entry || [];
-    if (!Array.isArray(entries)) entries = [entries];
-
-    entries = transformEntries(entries);
-
-    console.log(entries);
+    let entries = await getEntries();
     latestEntries = latestEntries.filter((lastEntry) => {
       return !!entries.find((entry) => entry.adidasid == lastEntry.adidasid);
     });
@@ -133,12 +129,15 @@ router.get("/data", async (req, res) => {
     });
     let { newEntries, topTenUpdates } = calcUpdates(entries);
     latestEntries = [...entries];
+    sockets.emit("updatedEntries", entries);
+
     console.log(topTenUpdates);
     let topThreeEntries = entries.slice(0, 3);
     let topTenUpdated = topTenUpdates.length > 0;
 
     entries = entries.slice(3, 10);
     let tickerEntries = [...newEntries];
+
     return res.send({
       entries,
       topThreeEntries,
@@ -156,6 +155,9 @@ router.put("/data", async (req, res) => {
     console.log("PUT", dbServerURL, req.body);
     await axios.put(dbServerURL, req.body);
     console.log("done");
+    let entries = await getEntries();
+    sockets.emit("updatedEntries", entries);
+
     return res.send();
   } catch (error) {
     console.error(error);

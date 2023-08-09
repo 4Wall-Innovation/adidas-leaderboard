@@ -12,7 +12,25 @@
       class="new__leaderboard"
     ></video>
     <div v-if="runSurpriseWinner" class="surprise__winner">
-      <video src="videos/surpriseWinner.webm" autoplay muted></video>
+      <video
+        v-if="highlightedUser?.badge == 0"
+        src="videos/fast.webm"
+        autoplay
+        muted
+      ></video>
+      <video
+        v-else-if="highlightedUser?.badge == 1"
+        src="videos/superFast.webm"
+        autoplay
+        muted
+      ></video>
+      <video
+        v-else-if="highlightedUser?.badge == 2"
+        src="videos/crazyFast.webm"
+        autoplay
+        muted
+      ></video>
+
       <div class="surprise__name">
         {{ highlightedUser?.name }} {{ highlightedUser?.surname }}
       </div>
@@ -20,12 +38,25 @@
         <div class="name">
           {{ highlightedUser?.name }} {{ highlightedUser?.surname }}
         </div>
+        <div class="you__are">you are</div>
         <div class="games">
-          <div class="game">{{ highlightedUser?.game1 }}</div>
-          <div class="game">{{ highlightedUser?.game2 }}</div>
-          <div class="game">{{ highlightedUser?.game3 }}</div>
+          <div class="game">
+            {{ renderTime(highlightedUser?.game1) }}
+            <span class="unit">CS</span>
+          </div>
+          <div class="game">
+            {{ renderTime(highlightedUser?.game2) }}
+            <span class="unit">CFF</span>
+          </div>
+          <div class="game">
+            {{ renderTime(highlightedUser?.game3) }}
+            <span class="unit">XC</span>
+          </div>
         </div>
-        <div class="total">{{ highlightedUser?.total }}</div>
+        <div class="total">
+          <div class="number">{{ renderNumber(highlightedUser?.total) }}</div>
+          <div class="unit">points</div>
+        </div>
       </div>
     </div>
 
@@ -308,14 +339,35 @@ body {
     .surprise__name {
       position: absolute;
       top: 230px;
-      left: 284px;
+      left: 184px;
       text-align: center;
       z-index: 20;
-      width: 200px;
+      width: 400px;
       z-index: 20;
       color: #fff;
       opacity: 0;
-      animation: surpriseNameFade 5s 0s forwards;
+      font-weight: bolder;
+      font-style: italic;
+      font-size: 64px;
+      // animation: surpriseNameSlide 5s 0s forwards;
+    }
+    @keyframes surpriseNameSlide {
+      0% {
+        opacity: 0;
+        transform: translateX(-200px);
+      }
+      10% {
+        opacity: 1;
+        transform: translateX(0px);
+      }
+      90% {
+        opacity: 1;
+        transform: translateX(0px);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(200px);
+      }
     }
     .surprise__plaque {
       position: absolute;
@@ -324,9 +376,9 @@ body {
       height: 400px;
       left: 184px;
       background: #fff;
-      opacity: 0;
+      // opacity: 0;
 
-      animation: surpriseNameFade 5s 5s forwards;
+      // animation: surpriseNameFade 5s 0s forwards;
 
       .name {
         position: absolute;
@@ -335,12 +387,23 @@ body {
         text-align: center;
         width: 200px;
       }
+      .you__are {
+        position: absolute;
+        top: 150px;
+        left: 100px;
+        text-align: center;
+        width: 200px;
+        color: #b4ed37;
+      }
       .games {
         position: absolute;
         top: 223px;
         left: 40px;
         text-align: right;
         width: 100px;
+        .unit {
+          color: #b4ed37;
+        }
       }
       .total {
         position: absolute;
@@ -348,6 +411,9 @@ body {
         left: 300px;
         text-align: left;
         width: 100px;
+        .unit {
+          color: #b4ed37;
+        }
       }
     }
     @keyframes surpriseNameFade {

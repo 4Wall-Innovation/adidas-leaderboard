@@ -16,9 +16,11 @@
       sticky-header
       @row-clicked="rowClicked"
     >
-      <template #cell(timestamp)="row"
-        >{{ new Date(row.item.timestamp).toLocaleTimeString() }}
-        {{ new Date(row.item.timestamp).toLocaleDateString() }}</template
+      <template #cell(timestamp)="row">
+        <template v-if="row.item.timestamp">
+          {{ new Date(row.item.timestamp).toLocaleTimeString() }}
+          {{ new Date(row.item.timestamp).toLocaleDateString() }}</template
+        ></template
       >
     </b-table>
     <b-modal id="highlightModal" title="Highlight user?" :hide-footer="true">
@@ -52,6 +54,11 @@ export default {
       reconnection: true,
       teardown: false,
       transports: ["websocket"],
+    });
+    this.socket.on("updatedEntries", (entries) => {
+      console.log(entries);
+      this.entries = entries;
+      this.filterEntries();
     });
 
     this.getData();

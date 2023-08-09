@@ -10,8 +10,6 @@
     <b-form-input v-model="user.game1" placeholder="Game 1"></b-form-input>
     <b-form-input v-model="user.game2" placeholder="Game 2"></b-form-input>
     <b-form-input v-model="user.game3" placeholder="Game 3"></b-form-input>
-    <b-form-input v-model="user.total" placeholder="Total"></b-form-input>
-
     <b-button class="reload" variant="primary" @click="sendData()"
       >Send</b-button
     >
@@ -28,7 +26,6 @@ export default {
         game1: 0,
         game2: 0,
         game3: 0,
-        total: 0,
       },
     };
   },
