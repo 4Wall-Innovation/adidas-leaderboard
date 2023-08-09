@@ -10,15 +10,9 @@
       autoplay
       muted
       class="new__leaderboard"
-      @ended="newLeaderboardFinished()"
     ></video>
     <div v-if="runSurpriseWinner" class="surprise__winner">
-      <video
-        src="videos/surpriseWinner.webm"
-        autoplay
-        muted
-        @ended="surpriseWinnerFinished()"
-      ></video>
+      <video src="videos/surpriseWinner.webm" autoplay muted></video>
       <div class="surprise__name">
         {{ highlightedUser?.name }} {{ highlightedUser?.surname }}
       </div>
@@ -160,10 +154,9 @@ export default {
       await new Promise((r) => setTimeout(r, 10000));
       this.runSurpriseWinner = false;
     },
-    surpriseWinnerFinished() {
-      this.runSurpriseWinner = false;
-    },
-    newLeaderboardFinished() {
+    async runAnimationNewLeaderboard() {
+      this.runNewLeaderboard = true;
+      await new Promise((r) => setTimeout(r, 10000));
       this.runNewLeaderboard = false;
     },
     async run() {
@@ -187,8 +180,7 @@ export default {
         } = data;
         this.entries = entries;
         this.topThreeEntries = topThreeEntries;
-        console.log("tickerEntries", tickerEntries.length, tickerEntries);
-        this.runSurpriseWinner = topTenUpdated;
+        if (topTenUpdated) this.runAnimationNewLeaderboard();
         if (tickerEntries) {
           this.tickerEntries = tickerEntries;
           this.runTicker(this.tickerEntries.length);

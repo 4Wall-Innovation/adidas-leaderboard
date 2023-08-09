@@ -71,6 +71,21 @@ const calcUpdates = (entries) => {
   return { newEntries, topTenUpdates };
 };
 
+const transformEntries = (entries) => {
+  return entries.map((entry) => {
+    return {
+      adidasid: entry.adidasid,
+      name: entry.name,
+      surname: entry.surname,
+      game1: entry.game1,
+      game2: entry.game2,
+      game3: entry.game3,
+      total: entry.total,
+      timestamp: entry.timestampEnd,
+    };
+  });
+};
+
 router.get("/alldata", async (req, res) => {
   try {
     let { data } = await axios.get(dbServerURL);
@@ -78,6 +93,8 @@ router.get("/alldata", async (req, res) => {
     let jsonObj = parser.parse(data);
     if (!jsonObj) throw "No JSON Object";
     let entries = jsonObj?.xml?.entry || [];
+    if (!Array.isArray(entries)) entries = [entries];
+    entries = transformEntries(entries);
     res.send(entries);
   } catch (error) {
     console.error(error);
@@ -94,19 +111,9 @@ router.get("/data", async (req, res) => {
     let entries = jsonObj?.xml?.entry || [];
     if (!Array.isArray(entries)) entries = [entries];
 
-    entries = entries.map((entry) => {
-      return {
-        adidasid: entry.adidasid,
-        name: entry.name,
-        surname: entry.surname,
-        game1: entry.game1,
-        game2: entry.game2,
-        game3: entry.game3,
-        total: entry.total,
-        timestamp: entry.timestampEnd,
-      };
-    });
+    entries = transformEntries(entries);
 
+    console.log(entries);
     latestEntries = latestEntries.filter((lastEntry) => {
       return !!entries.find((entry) => entry.adidasid == lastEntry.adidasid);
     });
@@ -126,7 +133,7 @@ router.get("/data", async (req, res) => {
     });
     let { newEntries, topTenUpdates } = calcUpdates(entries);
     latestEntries = [...entries];
-
+    console.log(topTenUpdates);
     let topThreeEntries = entries.slice(0, 3);
     let topTenUpdated = topTenUpdates.length > 0;
 

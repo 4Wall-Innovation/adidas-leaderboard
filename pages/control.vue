@@ -40,7 +40,7 @@ export default {
       searchString: "",
       highlightUser: null,
       fields: [
-        { key: "id", sortable: true },
+        { key: "adidasid", sortable: true },
         { key: "name", sortable: true },
         { key: "surname", sortable: true },
         { key: "timestamp", sortable: true },
