@@ -45,6 +45,7 @@ export default {
         { key: "adidasid", sortable: true },
         { key: "name", sortable: true },
         { key: "surname", sortable: true },
+        { key: "total", sortable: true },
         { key: "timestamp", sortable: true },
       ],
     };

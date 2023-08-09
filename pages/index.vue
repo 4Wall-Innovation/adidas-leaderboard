@@ -11,7 +11,15 @@
       muted
       class="new__leaderboard"
     ></video>
-    <div v-if="runSurpriseWinner" class="surprise__winner">
+    <div
+      v-if="runSurpriseWinner"
+      class="surprise__winner"
+      :class="{
+        badge0: highlightedUser?.badge == 0,
+        badge1: highlightedUser?.badge == 1,
+        badge2: highlightedUser?.badge == 2,
+      }"
+    >
       <video
         v-if="highlightedUser?.badge == 0"
         src="videos/fast.webm"
@@ -42,20 +50,20 @@
         <div class="games">
           <div class="game">
             {{ renderTime(highlightedUser?.game1) }}
-            <span class="unit">CS</span>
+            <div class="unit">CS</div>
           </div>
           <div class="game">
             {{ renderTime(highlightedUser?.game2) }}
-            <span class="unit">CFF</span>
+            <div class="unit">CFF</div>
           </div>
           <div class="game">
             {{ renderTime(highlightedUser?.game3) }}
-            <span class="unit">XC</span>
+            <div class="unit">XC</div>
           </div>
         </div>
         <div class="total">
           <div class="number">{{ renderNumber(highlightedUser?.total) }}</div>
-          <div class="unit">points</div>
+          <div class="unit">POINTS</div>
         </div>
       </div>
     </div>
@@ -163,8 +171,8 @@ export default {
       auto: true,
       leaderboardSeconds: 27.5,
       adSeconds: 24,
+      tickerPreDelaySeconds: 8,
       timeout: null,
-      showHighlightUser: false,
       highlightedUser: null,
       tickerAnimations: [],
     };
@@ -182,7 +190,7 @@ export default {
     async highlightUser(user) {
       this.highlightedUser = user;
       this.runSurpriseWinner = true;
-      await new Promise((r) => setTimeout(r, 10000));
+      await new Promise((r) => setTimeout(r, 22000));
       this.runSurpriseWinner = false;
     },
     async runAnimationNewLeaderboard() {
@@ -223,7 +231,9 @@ export default {
     async runTicker(numOfEntries) {
       let tickerEl = this.$refs.tickerSlider;
       tickerEl.style.transform = "translateX(0px)";
-      await new Promise((r) => setTimeout(r, 250));
+      await new Promise((r) =>
+        setTimeout(r, this.tickerPreDelaySeconds * 1000)
+      );
 
       if (numOfEntries <= 1) return;
 
@@ -236,7 +246,9 @@ export default {
       };
       for (let index = 0; index < numOfEntries; index++) {
         timing.delay =
-          (index + 1) * ((this.leaderboardSeconds * 1000) / numOfEntries);
+          (index + 1) *
+          (((this.leaderboardSeconds - this.tickerPreDelaySeconds) * 1000) /
+            numOfEntries);
         let steps = [
           { transform: `translateX(${index * -1200}px)` },
           { transform: `translateX(${(index + 1) * -1200}px)` },
@@ -331,25 +343,39 @@ body {
   flex-direction: column;
   .new__leaderboard {
     position: absolute;
-    z-index: 15;
+    z-index: 22;
   }
   .surprise__winner {
     position: absolute;
-    z-index: 15;
+    z-index: 25;
     .surprise__name {
       position: absolute;
-      top: 230px;
+      top: 200px;
       left: 184px;
       text-align: center;
       z-index: 20;
       width: 400px;
       z-index: 20;
-      color: #fff;
       opacity: 0;
       font-weight: bolder;
       font-style: italic;
       font-size: 64px;
-      // animation: surpriseNameSlide 5s 0s forwards;
+      animation: surpriseNameSlide 4s 7.5s forwards;
+    }
+    &.badge0 {
+      .surprise__name {
+        color: #000;
+      }
+    }
+    &.badge1 {
+      .surprise__name {
+        color: #b7e747;
+      }
+    }
+    &.badge2 {
+      .surprise__name {
+        color: #000;
+      }
     }
     @keyframes surpriseNameSlide {
       0% {
@@ -375,59 +401,89 @@ body {
       width: 400px;
       height: 400px;
       left: 184px;
-      background: #fff;
-      // opacity: 0;
-
-      // animation: surpriseNameFade 5s 0s forwards;
+      color: #fff;
+      opacity: 0;
+      overflow: hidden;
+      width: 0px;
+      animation: surprisePlaqueReveal 7s 13s forwards;
 
       .name {
         position: absolute;
-        top: 110px;
+        top: 63px;
         left: 100px;
         text-align: center;
         width: 200px;
+        font-weight: bold;
+        font-style: italic;
+        font-size: 24px;
       }
       .you__are {
         position: absolute;
-        top: 150px;
+        top: 88px;
         left: 100px;
         text-align: center;
         width: 200px;
-        color: #b4ed37;
+        color: #b7e747;
+        font-style: italic;
+        font-weight: bold;
       }
       .games {
         position: absolute;
-        top: 223px;
-        left: 40px;
+        top: 242px;
+        left: 85px;
         text-align: right;
         width: 100px;
-        .unit {
-          color: #b4ed37;
+        font-weight: bold;
+        .game {
+          display: flex;
+          justify-content: flex-end;
+          gap: 2px;
+          height: 20px;
+
+          .unit {
+            color: #b7e747;
+            width: 32px;
+            text-align: center;
+          }
         }
       }
       .total {
         position: absolute;
-        top: 223px;
-        left: 300px;
+        top: 243px;
+        left: 219px;
         text-align: left;
         width: 100px;
+
+        .number {
+          font-weight: bold;
+          font-size: 34px;
+          font-weight: bold;
+          line-height: 35px;
+        }
         .unit {
-          color: #b4ed37;
+          color: #b7e747;
+          font-weight: bold;
         }
       }
     }
-    @keyframes surpriseNameFade {
+
+    @keyframes surprisePlaqueReveal {
       0% {
         opacity: 0;
+        width: 0px;
       }
       10% {
         opacity: 1;
       }
-      90% {
+      30% {
+        width: 600px;
+      }
+      92% {
         opacity: 1;
       }
       100% {
         opacity: 0;
+        width: 600px;
       }
     }
   }
@@ -501,7 +557,7 @@ body {
       .table__header {
         display: flex;
         width: 600px;
-        color: #b4ed37;
+        color: #b7e747;
         .gap {
           width: 260px;
         }
@@ -555,7 +611,7 @@ body {
           height: 31.5px;
           min-height: 31.5px;
           .position {
-            color: #b4ed37;
+            color: #b7e747;
             font-weight: bold;
             font-style: italic;
           }
@@ -595,7 +651,7 @@ body {
             width: 25px;
             margin-right: 35px;
             text-align: right;
-            color: #b4ed37;
+            color: #b7e747;
             font-weight: bold;
             font-style: italic;
           }
@@ -629,6 +685,7 @@ body {
     width: 100%;
     height: 100%;
     opacity: 0;
+    z-index: 20;
     transition: all 1s ease;
     &.show {
       opacity: 1;
