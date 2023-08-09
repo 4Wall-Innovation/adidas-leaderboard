@@ -10,8 +10,11 @@
     <b-form-input v-model="user.game1" placeholder="Game 1"></b-form-input>
     <b-form-input v-model="user.game2" placeholder="Game 2"></b-form-input>
     <b-form-input v-model="user.game3" placeholder="Game 3"></b-form-input>
-    <b-button class="reload" variant="primary" @click="sendData()"
+    <b-button class="reload mb-2" variant="primary" @click="sendData()"
       >Send</b-button
+    >
+    <b-button class="reload" variant="primary" @click="sendRandom()"
+      >New Random</b-button
     >
   </div>
 </template>
@@ -33,6 +36,9 @@ export default {
   methods: {
     async sendData() {
       await this.$axios.put("/api/data", this.user);
+    },
+    async sendRandom() {
+      await this.$axios.put("/api/random", {});
     },
   },
 };

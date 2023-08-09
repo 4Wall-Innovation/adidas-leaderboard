@@ -164,4 +164,17 @@ router.put("/data", async (req, res) => {
     return res.status(500).send(error.message);
   }
 });
+router.put("/random", async (req, res) => {
+  try {
+    await axios.put(`${dbServerURL}/random`, req.body);
+    console.log("done");
+    let entries = await getEntries();
+    sockets.emit("updatedEntries", entries);
+
+    return res.send();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(error.message);
+  }
+});
 module.exports = router;
