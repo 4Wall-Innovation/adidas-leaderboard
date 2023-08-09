@@ -80,10 +80,10 @@
       <div class="entries">
         <div class="table__header">
           <div class="gap"></div>
-          <div class="column__header">sprint</div>
-          <div class="column__header">dribble</div>
-          <div class="column__header">reaction</div>
-          <div class="column__header">points</div>
+          <div class="column__header">CS</div>
+          <div class="column__header">CFF</div>
+          <div class="column__header">XC</div>
+          <div class="column__header">POINTS</div>
         </div>
         <div class="top__three">
           <div
