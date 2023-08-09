@@ -5,28 +5,36 @@
     @click="run()"
   >
     <video
-      v-if="runCoins"
-      src="videos/coins.webm"
+      v-if="runNewLeaderboard"
+      src="videos/newLeaderboard.webm"
       autoplay
       muted
-      class="coins"
+      class="new__leaderboard"
+      @ended="newLeaderboardFinished()"
     ></video>
-    <video
-      v-if="runCoinsHorizontal"
-      src="videos/coinshorizontal.webm"
-      autoplay
-      muted
-      class="coins"
-      @ended="coinsFinished()"
-    ></video>
-    <div class="highlight" :class="{ show: showHighlightUser }">
-      <div class="container">
-        <div class="title">Winner</div>
+    <div v-if="runSurpriseWinner" class="surprise__winner">
+      <video
+        src="videos/surpriseWinner.webm"
+        autoplay
+        muted
+        @ended="surpriseWinnerFinished()"
+      ></video>
+      <div class="surprise__name">
+        {{ highlightedUser?.name }} {{ highlightedUser?.surname }}
+      </div>
+      <div class="surprise__plaque">
         <div class="name">
           {{ highlightedUser?.name }} {{ highlightedUser?.surname }}
         </div>
+        <div class="games">
+          <div class="game">{{ highlightedUser?.game1 }}</div>
+          <div class="game">{{ highlightedUser?.game2 }}</div>
+          <div class="game">{{ highlightedUser?.game3 }}</div>
+        </div>
+        <div class="total">{{ highlightedUser?.total }}</div>
       </div>
     </div>
+
     <div class="leaderboard" :class="{ show: state == 'leaderboard' }">
       <video
         src="videos/header.webm"
@@ -123,8 +131,8 @@ export default {
       entries: [],
       topThreeEntries: [],
       tickerEntries: [],
-      runCoins: false,
-      runCoinsHorizontal: false,
+      runNewLeaderboard: false,
+      runSurpriseWinner: false,
       adData: {},
       state: "",
       auto: true,
@@ -147,16 +155,16 @@ export default {
   },
   methods: {
     async highlightUser(user) {
-      console.log(user);
       this.highlightedUser = user;
-      this.showHighlightUser = true;
-      this.runCoinsHorizontal = true;
+      this.runSurpriseWinner = true;
       await new Promise((r) => setTimeout(r, 10000));
-      this.showHighlightUser = false;
-      this.runCoinsHorizontal = false;
+      this.runSurpriseWinner = false;
     },
-    coinsFinished() {
-      this.runCoinsHorizontal = false;
+    surpriseWinnerFinished() {
+      this.runSurpriseWinner = false;
+    },
+    newLeaderboardFinished() {
+      this.runNewLeaderboard = false;
     },
     async run() {
       clearTimeout(this.timeout);
@@ -180,7 +188,7 @@ export default {
         this.entries = entries;
         this.topThreeEntries = topThreeEntries;
         console.log("tickerEntries", tickerEntries.length, tickerEntries);
-        if (!this.showHighlightUser) this.runCoinsHorizontal = topTenUpdated;
+        this.runSurpriseWinner = topTenUpdated;
         if (tickerEntries) {
           this.tickerEntries = tickerEntries;
           this.runTicker(this.tickerEntries.length);
@@ -298,10 +306,74 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  .coins {
+  .new__leaderboard {
     position: absolute;
     z-index: 15;
   }
+  .surprise__winner {
+    position: absolute;
+    z-index: 15;
+    .surprise__name {
+      position: absolute;
+      top: 230px;
+      left: 284px;
+      text-align: center;
+      z-index: 20;
+      width: 200px;
+      z-index: 20;
+      color: #fff;
+      opacity: 0;
+      animation: surpriseNameFade 5s 0s forwards;
+    }
+    .surprise__plaque {
+      position: absolute;
+      top: 50px;
+      width: 400px;
+      height: 400px;
+      left: 184px;
+      background: #fff;
+      opacity: 0;
+
+      animation: surpriseNameFade 5s 5s forwards;
+
+      .name {
+        position: absolute;
+        top: 110px;
+        left: 100px;
+        text-align: center;
+        width: 200px;
+      }
+      .games {
+        position: absolute;
+        top: 223px;
+        left: 40px;
+        text-align: right;
+        width: 100px;
+      }
+      .total {
+        position: absolute;
+        top: 223px;
+        left: 300px;
+        text-align: left;
+        width: 100px;
+      }
+    }
+    @keyframes surpriseNameFade {
+      0% {
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+  }
+
   .highlight {
     position: absolute;
     width: 100%;
@@ -489,7 +561,6 @@ body {
         }
       }
       .divider {
-        // margin: 5px 0px -5px 0px;
         position: relative;
       }
     }
