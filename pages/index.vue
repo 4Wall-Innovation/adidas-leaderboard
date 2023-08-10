@@ -271,15 +271,7 @@ export default {
       }
       this.tickerAnimations = [];
     },
-    async getAd() {
-      try {
-        let { data } = await this.$axios.get("/api/ad");
-        if (!data) throw "No data";
-        this.adData = data;
-      } catch (error) {
-        console.error(error);
-      }
-    },
+
     async changeState(state) {
       if (!state) {
         if (this.state == "leaderboard") state = "ads";
@@ -295,7 +287,7 @@ export default {
         await new Promise((r) => setTimeout(r, 1000));
         this.adData = {};
       } else if (state == "ads") {
-        await this.getAd();
+        this.adData = { filename: "1", ext: "webm", path: "/ads/1.webm" };
         this.state = "ads";
         await new Promise((r) => setTimeout(r, 1000));
         this.resetLeaderboard();
