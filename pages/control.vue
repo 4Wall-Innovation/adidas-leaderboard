@@ -1,7 +1,9 @@
 <template>
   <div class="container">
-    <h2>Total Users: {{ entries?.length }}</h2>
-
+    <div class="stats">
+      <h2>Total Users: {{ entries?.length }}</h2>
+      <h2>Finished Users: {{ finishedUsers }}</h2>
+    </div>
     <div class="header my-2">
       <b-form-input
         v-model="searchString"
@@ -38,6 +40,11 @@
 </template>
 <script>
 export default {
+  computed: {
+    finishedUsers() {
+      return this.entries?.filter((entry) => !!entry.finished)?.length;
+    },
+  },
   data() {
     return {
       socket: null,
@@ -102,6 +109,10 @@ export default {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  .stats {
+    display: flex;
+    gap: 50px;
+  }
   .header {
     display: flex;
     gap: 20px;
