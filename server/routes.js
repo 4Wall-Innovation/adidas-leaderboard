@@ -111,6 +111,8 @@ router.get("/alldata", async (req, res) => {
 router.get("/data", async (req, res) => {
   try {
     let entries = await getEntries();
+    sockets.emit("updatedEntries", entries);
+
     latestEntries = latestEntries.filter((lastEntry) => {
       return !!entries.find((entry) => entry.adidasid == lastEntry.adidasid);
     });
@@ -134,7 +136,6 @@ router.get("/data", async (req, res) => {
     });
     let { newEntries, topTenUpdates } = calcUpdates(entries);
     latestEntries = [...entries];
-    sockets.emit("updatedEntries", entries);
 
     console.log(topTenUpdates);
     let topThreeEntries = entries.slice(0, 3);
