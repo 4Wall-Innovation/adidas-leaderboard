@@ -344,10 +344,10 @@ body {
     .surprise__name {
       position: absolute;
       top: 200px;
-      left: 0px;
+      left: 50px;
       text-align: center;
       z-index: 20;
-      width: 768px;
+      width: 668px;
       z-index: 20;
       opacity: 0;
       font-weight: bolder;
