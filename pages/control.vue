@@ -1,5 +1,7 @@
 <template>
   <div class="container">
+    <h2>Total Users: {{ entries?.length }}</h2>
+
     <div class="header my-2">
       <b-form-input
         v-model="searchString"
