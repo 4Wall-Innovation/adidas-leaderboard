@@ -18,8 +18,10 @@
     >
       <template #cell(timestamp)="row">
         <template v-if="row.item.timestamp">
-          {{ new Date(row.item.timestamp).toLocaleTimeString() }}
-          {{ new Date(row.item.timestamp).toLocaleDateString() }}</template
+          {{ new Date(row.item.timestamp * 1000).toLocaleTimeString() }}
+          {{
+            new Date(row.item.timestamp * 1000).toLocaleDateString()
+          }}</template
         ></template
       >
     </b-table>
