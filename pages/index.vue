@@ -185,7 +185,6 @@ export default {
     });
     this.socket.on("highlightUser", this.highlightUser);
     this.run();
-    this.highlightUser({ name: "Jake" });
   },
   methods: {
     async highlightUser(user) {
