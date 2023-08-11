@@ -185,6 +185,7 @@ export default {
     });
     this.socket.on("highlightUser", this.highlightUser);
     this.run();
+    this.highlightUser({ name: "Jake" });
   },
   methods: {
     async highlightUser(user) {
@@ -343,10 +344,10 @@ body {
     .surprise__name {
       position: absolute;
       top: 200px;
-      left: 184px;
+      left: 0px;
       text-align: center;
       z-index: 20;
-      width: 400px;
+      width: 768px;
       z-index: 20;
       opacity: 0;
       font-weight: bolder;
