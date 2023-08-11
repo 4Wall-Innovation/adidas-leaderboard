@@ -83,6 +83,7 @@ const transformEntries = (entries) => {
       total: entry.total,
       badge: entry.badge,
       timestamp: entry.timestampEnd,
+      finished: entry.finished,
     };
   });
 };
@@ -116,7 +117,11 @@ router.get("/data", async (req, res) => {
 
     entries = entries.filter(
       (entry) =>
-        !!entry.total && !!entry.game1 && !!entry.game2 && !!entry.game3
+        !!entry.total &&
+        !!entry.game1 &&
+        !!entry.game2 &&
+        !!entry.game3 &&
+        !!entry.finished
     );
     entries.sort((a, b) => {
       return b.total - a.total;
